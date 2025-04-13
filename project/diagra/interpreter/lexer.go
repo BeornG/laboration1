@@ -90,7 +90,8 @@ func Lex(input string) []Token {
 			continue
 		}
 
-		//
+		// Kontrollera om tecknet är ett av de specifika symbolerna '=', '(', ')', eller ','.
+		// Om det är det, skapa en TOKEN_SYMBOL och lägg till den i tokens-listan.
 		if c == '=' || c == '(' || c == ')' || c == ',' {
 			tokens = append(tokens, Token{Type: TOKEN_SYMBOL, Value: string(c)})
 			i++
