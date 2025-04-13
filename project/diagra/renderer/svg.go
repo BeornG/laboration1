@@ -1,0 +1,57 @@
+package renderer
+
+import (
+	"diagra/interpreter"
+	"fmt"
+	"strings"
+)
+
+// RenderSVG tar ett diagram och returnerar en SVG-sträng som representerar diagrammet.
+func RenderSVG(d interpreter.Diagram) string {
+	var sb strings.Builder
+
+	sb.WriteString(`<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600">` + "\n")
+
+	pNodes, pEdges := ComputeLayout(d)
+
+	// Noder
+	for _, n := range pNodes {
+		x, y := n.X, n.Y
+		sb.WriteString(fmt.Sprintf(
+			`  <rect x="%d" y="%d" width="100" height="50" rx="10" ry="10" fill="#e0f7fa" stroke="#00796b" stroke-width="2"/>`+"\n",
+			x-50, y-25,
+		))
+		sb.WriteString(fmt.Sprintf(
+			`  <text x="%d" y="%d" font-size="14" text-anchor="middle" fill="#004d40">%s</text>`+"\n",
+			x, y+5, n.Node.Label,
+		))
+	}
+
+	// Kanter
+	for _, e := range pEdges {
+		sb.WriteString(fmt.Sprintf(
+			`  <line x1="%d" y1="%d" x2="%d" y2="%d" stroke="#37474f" stroke-width="2" marker-end="url(#arrow)"/>`+"\n",
+			e.FromX, e.FromY, e.ToX, e.ToY,
+		))
+		midX := (e.FromX + e.ToX) / 2
+		midY := (e.FromY + e.ToY) / 2
+		sb.WriteString(fmt.Sprintf(
+			`  <text x="%d" y="%d" font-size="12" text-anchor="middle" fill="#37474f">%s</text>`+"\n",
+			midX, midY-10, e.Edge.Label,
+		))
+	}
+
+	// Pilar
+	sb.WriteString(`
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5"
+            markerWidth="6" markerHeight="6"
+            orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#37474f"/>
+    </marker>
+  </defs>
+`)
+
+	sb.WriteString(`</svg>`)
+	return sb.String()
+}

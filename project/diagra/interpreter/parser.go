@@ -1,9 +1,12 @@
 package interpreter
 
+import "fmt"
+
 type Diagram struct {
-	Name  string
-	Nodes []Node
-	Edges []Edge
+	Name   string
+	Layout string
+	Nodes  []Node
+	Edges  []Edge
 }
 
 type Node struct {
@@ -53,59 +56,64 @@ func (p *parser) match(typ TokenType) bool {
 func (p *parser) parseDiagram() (Diagram, error) {
 	var d Diagram
 
-	// diagram flowchart {
-	if !p.match(TOKEN_KEYWORD) || p.currentToken().Value != "flowchart" {
-		return d, nil
+	// Förvänta: "diagram"
+	if p.currentToken().Type != TOKEN_KEYWORD || p.currentToken().Value != "diagram" {
+		return d, fmt.Errorf("förväntade 'diagram' som starttoken")
 	}
 	p.advance()
 
+	// Förvänta: typnamn (t.ex. flowchart)
+	if p.currentToken().Type != TOKEN_IDENTIFIER {
+		return d, fmt.Errorf("förväntade diagramtyp efter 'diagram'")
+	}
+	d.Name = p.currentToken().Value
+	p.advance()
+
+	// Förvänta: {
 	if !p.match(TOKEN_LBRACE) {
-		return d, nil
+		return d, fmt.Errorf("förväntade '{' efter diagramtyp")
 	}
 
-	// Loopa tills vi hittar }
+	// Läs innehållet
 	for p.currentToken().Type != TOKEN_RBRACE && p.currentToken().Type != TOKEN_EOF {
 		tok := p.currentToken()
 
+		// Noder
 		if tok.Type == TOKEN_KEYWORD && tok.Value == "node" {
 			p.advance()
 			id := p.currentToken().Value
 			p.advance()
+
 			label := p.currentToken().Value
 			p.advance()
 
-			d.Nodes = append(d.Nodes, Node{
-				ID:    id,
-				Label: label,
-			})
+			d.Nodes = append(d.Nodes, Node{ID: id, Label: label})
 			continue
 		}
 
+		// Kanter
 		if tok.Type == TOKEN_IDENTIFIER {
 			from := tok.Value
-			p.advance() // identifier
+			p.advance()
+
 			if !p.match(TOKEN_ARROW) {
-				return d, nil
+				return d, fmt.Errorf("förväntade '->' efter %s", from)
 			}
+
 			to := p.currentToken().Value
 			p.advance()
+
 			label := p.currentToken().Value
 			p.advance()
 
-			d.Edges = append(d.Edges, Edge{
-				From:  from,
-				To:    to,
-				Label: label,
-			})
+			d.Edges = append(d.Edges, Edge{From: from, To: to, Label: label})
 			continue
 		}
 
-		// Hoppa över okända tokens
+		// Hoppa över oväntade tokens
 		p.advance()
 	}
 
-	// }
 	p.match(TOKEN_RBRACE)
-
 	return d, nil
 }
