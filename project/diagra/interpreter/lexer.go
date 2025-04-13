@@ -13,6 +13,7 @@ const (
 	TOKEN_ARROW      TokenType = "ARROW"
 	TOKEN_LBRACE     TokenType = "LBRACE"
 	TOKEN_RBRACE     TokenType = "RBRACE"
+	TOKEN_SYMBOL     TokenType = "SYMBOL"
 	TOKEN_EOF        TokenType = "EOF"
 )
 
@@ -85,6 +86,13 @@ func Lex(input string) []Token {
 		}
 		if c == '}' {
 			tokens = append(tokens, Token{Type: TOKEN_RBRACE, Value: "}"})
+			i++
+			continue
+		}
+
+		//
+		if c == '=' || c == '(' || c == ')' || c == ',' {
+			tokens = append(tokens, Token{Type: TOKEN_SYMBOL, Value: string(c)})
 			i++
 			continue
 		}

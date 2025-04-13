@@ -69,21 +69,47 @@ func (p *parser) parseDiagram() (Diagram, error) {
 	d.Name = p.currentToken().Value
 	p.advance()
 
+	// Valfria attribut (t.ex. layout)
+	if p.currentToken().Type == TOKEN_SYMBOL && p.currentToken().Value == "(" {
+		p.advance()
+		for p.currentToken().Type != TOKEN_SYMBOL || p.currentToken().Value != ")" {
+			key := p.currentToken().Value
+			p.advance()
+
+			// Matcha '='
+			if p.currentToken().Type != TOKEN_SYMBOL || p.currentToken().Value != "=" {
+				return d, fmt.Errorf("förväntade '=' efter attributnamn")
+			}
+			p.advance()
+
+			value := p.currentToken().Value
+			p.advance()
+
+			if key == "layout" {
+				d.Layout = value
+			}
+
+			// Hoppa ev. komma
+			if p.currentToken().Value == "," {
+				p.advance()
+			}
+		}
+		p.match(TOKEN_SYMBOL) // matcha ')'
+	}
+
 	// Förvänta: {
 	if !p.match(TOKEN_LBRACE) {
 		return d, fmt.Errorf("förväntade '{' efter diagramtyp")
 	}
 
-	// Läs innehållet
+	// Läs innehåll: noder & kanter
 	for p.currentToken().Type != TOKEN_RBRACE && p.currentToken().Type != TOKEN_EOF {
 		tok := p.currentToken()
 
-		// Noder
 		if tok.Type == TOKEN_KEYWORD && tok.Value == "node" {
 			p.advance()
 			id := p.currentToken().Value
 			p.advance()
-
 			label := p.currentToken().Value
 			p.advance()
 
@@ -91,7 +117,6 @@ func (p *parser) parseDiagram() (Diagram, error) {
 			continue
 		}
 
-		// Kanter
 		if tok.Type == TOKEN_IDENTIFIER {
 			from := tok.Value
 			p.advance()
@@ -110,7 +135,6 @@ func (p *parser) parseDiagram() (Diagram, error) {
 			continue
 		}
 
-		// Hoppa över oväntade tokens
 		p.advance()
 	}
 

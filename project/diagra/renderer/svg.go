@@ -12,7 +12,15 @@ func RenderSVG(d interpreter.Diagram) string {
 
 	sb.WriteString(`<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600">` + "\n")
 
-	pNodes, pEdges := ComputeLayout(d)
+	var pNodes []PositionedNode
+	var pEdges []PositionedEdge
+
+	switch d.Layout {
+	case "vertical":
+		pNodes, pEdges = ComputeVerticalLayout(d)
+	default:
+		pNodes, pEdges = ComputeLayout(d) // horisontell som fallback
+	}
 
 	// Noder
 	for _, n := range pNodes {
@@ -35,10 +43,15 @@ func RenderSVG(d interpreter.Diagram) string {
 		))
 		midX := (e.FromX + e.ToX) / 2
 		midY := (e.FromY + e.ToY) / 2
+
+		labelX := midX + 10 // flytta etiketten åt sidan
+		labelY := midY - 5  // lite ovanför linjen
+
 		sb.WriteString(fmt.Sprintf(
-			`  <text x="%d" y="%d" font-size="12" text-anchor="middle" fill="#37474f">%s</text>`+"\n",
-			midX, midY-10, e.Edge.Label,
+			`  <text x="%d" y="%d" font-size="12" text-anchor="start" fill="#37474f">%s</text>`+"\n",
+			labelX, labelY, e.Edge.Label,
 		))
+
 	}
 
 	// Pilar

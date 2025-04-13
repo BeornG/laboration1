@@ -1,5 +1,7 @@
-diagram flowchart {
+diagram flowchart (layout=vertical) {
 	node A "Start"
 	node B "Bearbeta"
+    node C "Slut"
 	A -> B "Går vidare"
+    B -> C "Ok"
 }

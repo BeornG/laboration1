@@ -53,6 +53,7 @@ func ComputeLayout(d interpreter.Diagram) ([]PositionedNode, []PositionedEdge) {
 	return pNodes, pEdges
 }
 
+// ComputeVerticalLayout returnerar en layout för diagrammet i vertikal stil
 func ComputeVerticalLayout(d interpreter.Diagram) ([]PositionedNode, []PositionedEdge) {
 	var pNodes []PositionedNode
 	var pEdges []PositionedEdge
