@@ -1,0 +1,7 @@
+diagram flowchart {
+	node A "Start"
+	node B "Bearbeta"
+    node C "Slut"
+	A -> B "Går vidare"
+    B -> C "Ok"
+}

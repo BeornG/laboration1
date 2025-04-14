@@ -47,6 +47,14 @@ func RenderSVG(d interpreter.Diagram) string {
 		labelX := midX + 10 // flytta etiketten åt sidan
 		labelY := midY - 5  // lite ovanför linjen
 
+		if d.Layout == "vertical" {
+			labelX += 10
+			labelY -= 5
+		} else { // default är horisontell
+			labelY -= 10
+			labelX -= 30
+		}
+
 		sb.WriteString(fmt.Sprintf(
 			`  <text x="%d" y="%d" font-size="12" text-anchor="start" fill="#37474f">%s</text>`+"\n",
 			labelX, labelY, e.Edge.Label,

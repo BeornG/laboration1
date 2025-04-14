@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	src, err := os.ReadFile("example/example1.diag")
+	src, err := os.ReadFile("example/example2.diag")
 	if err != nil {
 		fmt.Println("Kunde inte läsa fil:", err)
 		return
