@@ -1,14 +1,38 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600">
-  <rect x="100" y="125" width="100" height="50" rx="10" ry="10" fill="#e0f7fa" stroke="#00796b" stroke-width="2"/>
-  <text x="150" y="155" font-size="14" text-anchor="middle" fill="#004d40">Start</text>
-  <rect x="300" y="125" width="100" height="50" rx="10" ry="10" fill="#e0f7fa" stroke="#00796b" stroke-width="2"/>
-  <text x="350" y="155" font-size="14" text-anchor="middle" fill="#004d40">Bearbeta</text>
-  <rect x="500" y="125" width="100" height="50" rx="10" ry="10" fill="#e0f7fa" stroke="#00796b" stroke-width="2"/>
-  <text x="550" y="155" font-size="14" text-anchor="middle" fill="#004d40">Slut</text>
-  <line x1="210" y1="150" x2="290" y2="150" stroke="#37474f" stroke-width="2" marker-end="url(#arrow)"/>
-  <text x="230" y="135" font-size="12" text-anchor="start" fill="#37474f">Går vidare</text>
-  <line x1="410" y1="150" x2="490" y2="150" stroke="#37474f" stroke-width="2" marker-end="url(#arrow)"/>
-  <text x="430" y="135" font-size="12" text-anchor="start" fill="#37474f">Ok</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1900" height="1100" viewBox="0 0 1900 1100">
+  <rect x="350" y="75" width="100" height="50" rx="10" ry="10" fill="#e0f7fa" stroke="#00796b" stroke-width="2"/>
+  <text x="400" y="105" font-size="14" text-anchor="middle" fill="#004d40">Start</text>
+  <rect x="350" y="195" width="100" height="50" rx="10" ry="10" fill="#e0f7fa" stroke="#00796b" stroke-width="2"/>
+  <text x="400" y="225" font-size="14" text-anchor="middle" fill="#004d40">Bearbeta</text>
+  <rect x="350" y="315" width="100" height="50" rx="10" ry="10" fill="#e0f7fa" stroke="#00796b" stroke-width="2"/>
+  <text x="400" y="345" font-size="14" text-anchor="middle" fill="#004d40">Slut</text>
+  <rect x="350" y="435" width="100" height="50" rx="10" ry="10" fill="#e0f7fa" stroke="#00796b" stroke-width="2"/>
+  <text x="400" y="465" font-size="14" text-anchor="middle" fill="#004d40">D</text>
+  <rect x="350" y="555" width="100" height="50" rx="10" ry="10" fill="#e0f7fa" stroke="#00796b" stroke-width="2"/>
+  <text x="400" y="585" font-size="14" text-anchor="middle" fill="#004d40">E</text>
+  <rect x="350" y="675" width="100" height="50" rx="10" ry="10" fill="#e0f7fa" stroke="#00796b" stroke-width="2"/>
+  <text x="400" y="705" font-size="14" text-anchor="middle" fill="#004d40">F</text>
+  <rect x="350" y="795" width="100" height="50" rx="10" ry="10" fill="#e0f7fa" stroke="#00796b" stroke-width="2"/>
+  <text x="400" y="825" font-size="14" text-anchor="middle" fill="#004d40">G</text>
+  <rect x="350" y="915" width="100" height="50" rx="10" ry="10" fill="#e0f7fa" stroke="#00796b" stroke-width="2"/>
+  <text x="400" y="945" font-size="14" text-anchor="middle" fill="#004d40">H</text>
+  <rect x="350" y="1035" width="100" height="50" rx="10" ry="10" fill="#e0f7fa" stroke="#00796b" stroke-width="2"/>
+  <text x="400" y="1065" font-size="14" text-anchor="middle" fill="#004d40">I</text>
+  <line x1="400" y1="130" x2="400" y2="190" stroke="#37474f" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="420" y="150" font-size="12" text-anchor="start" fill="#37474f">Går vidare</text>
+  <line x1="400" y1="250" x2="400" y2="310" stroke="#37474f" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="420" y="270" font-size="12" text-anchor="start" fill="#37474f">Ok</text>
+  <line x1="400" y1="370" x2="400" y2="430" stroke="#37474f" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="420" y="390" font-size="12" text-anchor="start" fill="#37474f">ok</text>
+  <line x1="400" y1="490" x2="400" y2="550" stroke="#37474f" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="420" y="510" font-size="12" text-anchor="start" fill="#37474f">ok</text>
+  <line x1="400" y1="610" x2="400" y2="670" stroke="#37474f" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="420" y="630" font-size="12" text-anchor="start" fill="#37474f">bloop</text>
+  <line x1="400" y1="730" x2="400" y2="790" stroke="#37474f" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="420" y="750" font-size="12" text-anchor="start" fill="#37474f">Aaaaah</text>
+  <line x1="400" y1="850" x2="400" y2="910" stroke="#37474f" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="420" y="870" font-size="12" text-anchor="start" fill="#37474f">yay</text>
+  <line x1="400" y1="970" x2="400" y2="1030" stroke="#37474f" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="420" y="990" font-size="12" text-anchor="start" fill="#37474f">END</text>
 
   <defs>
     <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5"

@@ -6,11 +6,37 @@ import (
 	"strings"
 )
 
+const (
+	nodeSpacingX = 200
+	nodeSpacingY = 100
+	margin       = 100
+	nodeHeight   = 100
+)
+
 // RenderSVG tar ett diagram och returnerar en SVG-sträng som representerar diagrammet.
 func RenderSVG(d interpreter.Diagram) string {
 	var sb strings.Builder
 
-	sb.WriteString(`<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600">` + "\n")
+	defaultHeight := 600
+	defaultWidth := 800
+
+	height := defaultHeight
+	width := defaultWidth
+
+	// räkna total noder och kanter
+	switch d.Layout {
+	case "vertical":
+		height = len(d.Nodes)*nodeSpacingY + margin + nodeHeight
+		width = len(d.Nodes)*nodeSpacingX + margin
+	default:
+		height = len(d.Nodes)*nodeSpacingY + margin
+		width = len(d.Nodes)*nodeSpacingX + margin
+	}
+
+	sb.WriteString(fmt.Sprintf(
+		`<svg xmlns="http://www.w3.org/2000/svg" width="%d" height="%d" viewBox="0 0 %d %d">`+"\n",
+		width, height, width, height,
+	))
 
 	var pNodes []PositionedNode
 	var pEdges []PositionedEdge
