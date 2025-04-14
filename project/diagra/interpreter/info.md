@@ -2,16 +2,19 @@
 
 Kärnan i tolken
 
+TODO:
+- Stöd för kommentarer
+- Position/linjeinfo per token (för felmeddelanden)
+- Stöd för attribut i noder, t.ex. (color=red) men kanske en sak för renderer
+- Fler nyckelord och diagramtyper
+
 ## interpreter filer
 
 ### lexer.go
 delar upp text i tokens
 
-TODO:
-- Stöd för kommentarer
-- Position/linjeinfo per token (för felmeddelanden)
-- Stöd för attribut i noder, t.ex. (color=red)
-- Fler nyckelord och diagramtyper
+
+
 
 
 
