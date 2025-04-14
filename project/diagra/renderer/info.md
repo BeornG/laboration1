@@ -1,6 +1,13 @@
 # renderer
 Generatorer
 
+TODO:
+
+- dimensioner
+- färger
+- bestämma utseende på etiketter
+
+
 ## renderer filer
 
 ### svg.go
