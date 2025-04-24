@@ -50,7 +50,7 @@ func main() {
 
 	files, err := os.ReadDir(exampleDir)
 	if err != nil {
-		fmt.Println("🚨 Kunde inte läsa katalog:", err)
+		fmt.Println("Kunde inte läsa katalog:", err)
 		return
 	}
 
