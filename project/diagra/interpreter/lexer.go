@@ -20,7 +20,7 @@ func Lex(input string) []Token {
 	i := 0
 	for i < length {
 		c := runes[i]
-		fmt.Printf("Lex at %d: %q\n", i, c)
+		// fmt.Printf("Lex at %d: %q\n", i, c)
 		// Hoppa över whitespace
 		if unicode.IsSpace(c) {
 			i++
