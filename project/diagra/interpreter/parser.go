@@ -51,6 +51,10 @@ func (p *parser) parseDiagram() (Diagram, error) {
 	d.Name = p.currentToken().Value
 	p.advance()
 
+	if !allowedTypes[d.Name] {
+		return d, fmt.Errorf("okänd diagramtyp: %s", d.Name)
+	}
+
 	// Valfria attribut (t.ex. layout)
 	if p.currentToken().Value == "(" {
 		p.advance()
@@ -162,8 +166,11 @@ func (p *parser) parseDiagram() (Diagram, error) {
 			to := p.currentToken().Value
 			p.advance()
 
-			label := p.currentToken().Value
-			p.advance()
+			label := ""
+			if p.currentToken().Type == TOKEN_STRING {
+				label = p.currentToken().Value
+				p.advance()
+			}
 
 			color := "#37474f"
 			width := "2"

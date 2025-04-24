@@ -41,3 +41,8 @@ type Edge struct {
 	Color string
 	Width string
 }
+
+var allowedTypes = map[string]bool{
+	"flowchart": true,
+	"tree":      true,
+}

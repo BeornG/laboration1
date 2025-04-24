@@ -42,11 +42,22 @@ func RenderSVG(d interpreter.Diagram) string {
 	var pNodes []PositionedNode
 	var pEdges []PositionedEdge
 
-	switch d.Layout {
-	case "vertical":
-		pNodes, pEdges = ComputeVerticalLayout(d)
-	default:
-		pNodes, pEdges = ComputeLayout(d) // horisontell som fallback
+	// switch d.Layout {
+	// case "vertical":
+	// 	pNodes, pEdges = ComputeVerticalLayout(d)
+	// default:
+	// 	pNodes, pEdges = ComputeLayout(d) // horisontell som fallback
+	// }
+
+	switch d.Name {
+	case "flowchart":
+		if d.Layout == "vertical" {
+			pNodes, pEdges = ComputeVerticalLayout(d)
+		} else {
+			pNodes, pEdges = ComputeLayout(d) // horisontell som fallback
+		}
+	case "tree":
+		pNodes, pEdges = ComputeTreeLayout(d)
 	}
 
 	// Noder

@@ -1,8 +1,10 @@
 diagram tree {
 	node A "Root"
-	node B "Child 1"
-	node C "Child 2"
+	node B "Left"
+	node C "Right"
+	node D "Leaf"
 
-	A -> B "left"
-	A -> C "right"
+	A -> B
+	A -> C
+	B -> D
 }
