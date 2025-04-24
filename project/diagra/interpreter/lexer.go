@@ -1,26 +1,9 @@
 package interpreter
 
 import (
+	"fmt"
 	"unicode"
 )
-
-type TokenType string
-
-const (
-	TOKEN_KEYWORD    TokenType = "KEYWORD"
-	TOKEN_IDENTIFIER TokenType = "IDENTIFIER"
-	TOKEN_STRING     TokenType = "STRING"
-	TOKEN_ARROW      TokenType = "ARROW"
-	TOKEN_LBRACE     TokenType = "LBRACE"
-	TOKEN_RBRACE     TokenType = "RBRACE"
-	TOKEN_SYMBOL     TokenType = "SYMBOL"
-	TOKEN_EOF        TokenType = "EOF"
-)
-
-type Token struct {
-	Type  TokenType
-	Value string
-}
 
 var keywords = map[string]bool{
 	"diagram": true,
@@ -29,6 +12,7 @@ var keywords = map[string]bool{
 
 // Lex tar en sträng och returnerar en lista av tokens
 func Lex(input string) []Token {
+	fmt.Println("Lexing started")
 	var tokens []Token
 	runes := []rune(input)
 	length := len(runes)
@@ -36,7 +20,7 @@ func Lex(input string) []Token {
 	i := 0
 	for i < length {
 		c := runes[i]
-
+		fmt.Printf("Lex at %d: %q\n", i, c)
 		// Hoppa över whitespace
 		if unicode.IsSpace(c) {
 			i++
@@ -55,6 +39,16 @@ func Lex(input string) []Token {
 			} else {
 				tokens = append(tokens, Token{Type: TOKEN_IDENTIFIER, Value: value})
 			}
+			continue
+		}
+
+		// Siffror (för t.ex. width=3)
+		if unicode.IsDigit(c) {
+			start := i
+			for i < length && unicode.IsDigit(runes[i]) {
+				i++
+			}
+			tokens = append(tokens, Token{Type: TOKEN_IDENTIFIER, Value: string(runes[start:i])})
 			continue
 		}
 

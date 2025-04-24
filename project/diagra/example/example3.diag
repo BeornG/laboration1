@@ -1,0 +1,20 @@
+diagram flowchart  {
+	node A "Start"
+	node B "Bearbeta"
+    node C "Slut"
+    node D "D"
+    node E "E"
+    node F "F"
+    node G "G"
+    node H "H"
+    node I "I"
+
+	A -> B "Går vidare"
+    B -> C "Ok"
+    C -> D "ok"
+    D -> E "ok"
+    E -> F "bloop"
+    F -> G "Aaaaah"
+    G -> H "yay"
+    H -> I "END"
+}

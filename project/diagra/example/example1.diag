@@ -1,19 +1,19 @@
 diagram flowchart (layout=vertical) {
-	node A "Start"
+	node A "Start" (color=lightgreen, shape=ellipse, text=black, border=blue)
 	node B "Bearbeta"
     node C "Slut"
     node D "D"
-    node E "E"
-    node F "F"
-    node G "G"
+    node E "E" (shape=ellipse, border=red)
+    node F "F" (color=white, text=black)
+    node G "G" (color=black, text=white)
     node H "H"
-    node I "I"
+    node I "I" (color=red, shape=rect, text=white)
 
-	A -> B "Går vidare"
+    A -> B "Går vidare" (color=black, width=6)
     B -> C "Ok"
     C -> D "ok"
-    D -> E "ok"
-    E -> F "bloop"
+    D -> E "ok" (width=1)
+    E -> F "bloop" (color=red, width=4)
     F -> G "Aaaaah"
     G -> H "yay"
     H -> I "END"

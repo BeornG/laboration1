@@ -13,11 +13,12 @@ func main() {
 		fmt.Println("Kunde inte läsa fil:", err)
 		return
 	}
-	fmt.Println("Input:\n", string(src))
+	fmt.Printf("Input length: %d bytes\n", len(src))
 	tokens := interpreter.Lex(string(src))
 	for i, tok := range tokens {
 		fmt.Printf("%d: %s (%s)\n", i, tok.Value, tok.Type)
 	}
+
 	diagram, err := interpreter.Parse(tokens)
 	fmt.Printf("Nodes: %d, Edges: %d\n", len(diagram.Nodes), len(diagram.Edges))
 

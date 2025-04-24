@@ -2,24 +2,6 @@ package interpreter
 
 import "fmt"
 
-type Diagram struct {
-	Name   string
-	Layout string
-	Nodes  []Node
-	Edges  []Edge
-}
-
-type Node struct {
-	ID    string
-	Label string
-}
-
-type Edge struct {
-	From  string
-	To    string
-	Label string
-}
-
 // Parserstruktur
 type parser struct {
 	tokens  []Token
@@ -70,14 +52,17 @@ func (p *parser) parseDiagram() (Diagram, error) {
 	p.advance()
 
 	// Valfria attribut (t.ex. layout)
-	if p.currentToken().Type == TOKEN_SYMBOL && p.currentToken().Value == "(" {
+	if p.currentToken().Value == "(" {
 		p.advance()
-		for p.currentToken().Type != TOKEN_SYMBOL || p.currentToken().Value != ")" {
+		for {
+			if p.currentToken().Value == ")" || p.currentToken().Type == TOKEN_EOF {
+				break
+			}
+
 			key := p.currentToken().Value
 			p.advance()
 
-			// Matcha '='
-			if p.currentToken().Type != TOKEN_SYMBOL || p.currentToken().Value != "=" {
+			if p.currentToken().Value != "=" {
 				return d, fmt.Errorf("förväntade '=' efter attributnamn")
 			}
 			p.advance()
@@ -89,12 +74,11 @@ func (p *parser) parseDiagram() (Diagram, error) {
 				d.Layout = value
 			}
 
-			// Hoppa ev. komma
 			if p.currentToken().Value == "," {
 				p.advance()
 			}
 		}
-		p.match(TOKEN_SYMBOL) // matcha ')'
+		p.match(TOKEN_SYMBOL) // ")"
 	}
 
 	// Förvänta: {
@@ -102,10 +86,10 @@ func (p *parser) parseDiagram() (Diagram, error) {
 		return d, fmt.Errorf("förväntade '{' efter diagramtyp")
 	}
 
-	// Läs innehåll: noder & kanter
 	for p.currentToken().Type != TOKEN_RBRACE && p.currentToken().Type != TOKEN_EOF {
 		tok := p.currentToken()
 
+		// --- Noder ---
 		if tok.Type == TOKEN_KEYWORD && tok.Value == "node" {
 			p.advance()
 			id := p.currentToken().Value
@@ -113,10 +97,60 @@ func (p *parser) parseDiagram() (Diagram, error) {
 			label := p.currentToken().Value
 			p.advance()
 
-			d.Nodes = append(d.Nodes, Node{ID: id, Label: label})
+			// default värden
+			color := "#e0f7fa"
+			textColor := "#004d40"
+			shape := "rect"
+			border := "#00796b"
+
+			if p.currentToken().Value == "(" {
+				p.advance()
+				for {
+					if p.currentToken().Value == ")" || p.currentToken().Type == TOKEN_EOF {
+						break
+					}
+
+					key := p.currentToken().Value
+					p.advance()
+
+					if p.currentToken().Value != "=" {
+						return d, fmt.Errorf("förväntade '=' i nod-attribut")
+					}
+					p.advance()
+
+					value := p.currentToken().Value
+					p.advance()
+
+					switch key {
+					case "color":
+						color = value
+					case "text":
+						textColor = value
+					case "shape":
+						shape = value
+					case "border":
+						border = value
+					}
+
+					if p.currentToken().Value == "," {
+						p.advance()
+					}
+				}
+				p.advance() // stäng ")"
+			}
+
+			d.Nodes = append(d.Nodes, Node{
+				ID:     id,
+				Label:  label,
+				Color:  color,
+				Text:   textColor,
+				Shape:  shape,
+				Border: border,
+			})
 			continue
 		}
 
+		// --- Edges ---
 		if tok.Type == TOKEN_IDENTIFIER {
 			from := tok.Value
 			p.advance()
@@ -131,7 +165,49 @@ func (p *parser) parseDiagram() (Diagram, error) {
 			label := p.currentToken().Value
 			p.advance()
 
-			d.Edges = append(d.Edges, Edge{From: from, To: to, Label: label})
+			color := "#37474f"
+			width := "2"
+
+			if p.currentToken().Value == "(" {
+				p.advance()
+				for {
+					fmt.Println("Edge attr loop at:", p.currentToken())
+					if p.currentToken().Value == ")" || p.currentToken().Type == TOKEN_EOF {
+						break
+					}
+
+					key := p.currentToken().Value
+					p.advance()
+
+					if p.currentToken().Value != "=" {
+						return d, fmt.Errorf("förväntade '=' i edge-attribut")
+					}
+					p.advance()
+
+					value := p.currentToken().Value
+					p.advance()
+
+					switch key {
+					case "color":
+						color = value
+					case "width":
+						width = value
+					}
+
+					if p.currentToken().Value == "," {
+						p.advance()
+					}
+				}
+				p.advance() // stäng ")"
+			}
+
+			d.Edges = append(d.Edges, Edge{
+				From:  from,
+				To:    to,
+				Label: label,
+				Color: color,
+				Width: width,
+			})
 			continue
 		}
 

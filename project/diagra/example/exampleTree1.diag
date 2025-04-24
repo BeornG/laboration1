@@ -1,0 +1,8 @@
+diagram tree {
+	node A "Root"
+	node B "Child 1"
+	node C "Child 2"
+
+	A -> B "left"
+	A -> C "right"
+}
