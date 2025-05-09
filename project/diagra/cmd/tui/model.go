@@ -2,7 +2,9 @@ package tui
 
 import (
 	"fmt"
+	"os"
 	"path"
+	"strings"
 	"time"
 
 	"github.com/charmbracelet/bubbles/spinner"
@@ -14,6 +16,7 @@ type Mode int
 const (
 	modeMenu Mode = iota
 	modeFilePicker
+	modeRenderAll
 )
 
 type Model struct {
@@ -80,8 +83,12 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					m.slideTarget = modeFilePicker
 					return m, slideTick()
 				case 1:
-					m.output = "🔧 This option is not yet implemented."
-					return m, clearOutputAfter(2 * time.Second)
+					m.output = "Rendering all..."
+					m.loading = true
+					m.renderStart = time.Now()
+					m.spinner = spinner.New(spinner.WithSpinner(spinner.Dot))
+					cmd := renderAllCmd()
+					return m, tea.Batch(cmd, m.spinner.Tick)
 				case 2:
 					return m, tea.Quit
 				}
@@ -166,6 +173,26 @@ func renderDiagCmd(filename string) tea.Cmd {
 	return func() tea.Msg {
 		path := path.Join("example", filename)
 		renderDiagToSVG(path)
+		return renderFinishedMsg("Rendering finished")
+	}
+}
+
+func renderAllCmd() tea.Cmd {
+	path := "example"
+	diagFiles, err := os.ReadDir(path)
+	if err != nil {
+		fmt.Println("Error reading directory:", err)
+		return nil
+	}
+	var files []string
+	for _, file := range diagFiles {
+		if !strings.HasSuffix(file.Name(), ".diag") {
+			continue
+		}
+		files = append(files, file.Name())
+	}
+	return func() tea.Msg {
+		renderAllDiagrams(files)
 		return renderFinishedMsg("Rendering finished")
 	}
 }

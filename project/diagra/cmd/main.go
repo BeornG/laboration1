@@ -1,78 +1,19 @@
 package main
 
 import (
+	"diagra/cmd/cli"
 	"diagra/cmd/tui"
-	"diagra/interpreter"
-	"diagra/renderer"
-	"fmt"
+
 	"os"
-	"path/filepath"
-	"strings"
 )
 
-func processDiagramFile(path string, outputDir string) {
-	fmt.Println("Läser:", path)
-
-	src, err := os.ReadFile(path)
-	if err != nil {
-		fmt.Println("Kunde inte läsa fil:", err)
-		return
-	}
-	fmt.Printf("Input length: %d bytes\n", len(src))
-	tokens := interpreter.Lex(string(src))
-	for i, tok := range tokens {
-		fmt.Printf("%d: %s (%s)\n", i, tok.Value, tok.Type)
-	}
-	diagram, err := interpreter.Parse(tokens)
-	fmt.Printf("Nodes: %d, Edges: %d\n", len(diagram.Nodes), len(diagram.Edges))
-	if err != nil {
-		fmt.Println("Tolkningsfel:", err)
-		return
-	}
-
-	svg := renderer.RenderSVG(diagram)
-
-	base := strings.TrimSuffix(filepath.Base(path), ".diag")
-	outPath := filepath.Join(outputDir, base+".svg")
-
-	err = os.WriteFile(outPath, []byte(svg), 0644)
-	if err != nil {
-		fmt.Println("Kunde inte spara SVG:", err)
-		return
-	}
-
-	fmt.Println("Skapade:", outPath)
-}
-
 func main() {
-
-	exampleDir := "example"
-	outputDir := "output"
 	input := len(os.Args)
 
-	switch input {
-	case 1:
-		fmt.Println("Reading files from example directory:", exampleDir)
-		fmt.Println("Output will be saved to:", outputDir)
-		fmt.Println(("Use 'tui' command to launch the TUI interface"))
-	case 2:
-		if os.Args[1] == "tui" {
-			tui.RunTUI()
-			return
-		}
+	if input > 1 {
+		cli.RunCLI(os.Args[1:])
+	} else {
+		tui.RunTUI()
 	}
 
-	files, err := os.ReadDir(exampleDir)
-	if err != nil {
-		fmt.Println("Kunde inte läsa katalog:", err)
-		return
-	}
-
-	for _, file := range files {
-		if !strings.HasSuffix(file.Name(), ".diag") {
-			continue
-		}
-		fullPath := filepath.Join(exampleDir, file.Name())
-		processDiagramFile(fullPath, outputDir)
-	}
 }

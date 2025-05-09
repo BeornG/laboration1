@@ -74,7 +74,7 @@ func (m Model) View() string {
 
 // viewMainMenuWithOffset renderar huvudmenyn med en slide offset
 func (m Model) viewMainMenuWithOffset() string {
-	options := []string{"Render from example", "Some future option", "Quit"}
+	options := []string{"Render from example", "Render all diagrams", "Quit"}
 	var b strings.Builder
 
 	b.WriteString(titleStyle.Render("📊 Diagra") + "\n\n")

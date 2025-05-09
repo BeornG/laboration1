@@ -92,3 +92,15 @@ func renderDiagToSVG(path string) string {
 	return outPath
 
 }
+
+func renderAllDiagrams(diagramFiles []string) string {
+	var output string
+	for _, file := range diagramFiles {
+		path := filepath.Join("example", file)
+		svgPath := renderDiagToSVG(path)
+		if svgPath != "" {
+			output += fmt.Sprintf("Created: %s\n", svgPath)
+		}
+	}
+	return output
+}
