@@ -1,7 +1,7 @@
 diagram flowchart (layout=vertical) {
 	node A "Start" (color=lightgreen, shape=ellipse, text=black)
 	node B "Process"
-	node C "End"
+	node C "Tui test2"
 
 	A -> B "Steg 1" (color=red, width=3)
 	B -> C "Steg 2"

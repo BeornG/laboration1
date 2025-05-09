@@ -79,28 +79,18 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					return m, slideTick()
 				case 1:
 					m.output = "🔧 This option is not yet implemented."
+					return m, nil
 				case 2:
 					return m, tea.Quit
 				}
 			case modeFilePicker:
-				renderDiagCmd(m.files[m.cursor])
-				m.loading = true
+				cmd := renderDiagCmd(m.files[m.cursor])
 				m.spinner, _ = m.spinner.Update(msg)
 				m.output = "Rendering..."
+
+				return m, tea.Batch(cmd, spinner.Tick)
 			}
 
-			// switch m.cursor { // 0 = Render from example, 1 = Some future option, 2 = Quit
-			// case 0:
-			// 	m.slidingIn = true
-			// 	m.transitioning = true
-			// 	m.slideOffset = 10
-			// 	m.slideTarget = modeFilePicker
-			// 	return m, slideTick()
-			// case 1:
-			// 	m.output = "🔧 This option is not yet implemented."
-			// case 2:
-			// 	return m, tea.Quit
-			// }
 		case "esc":
 			switch m.mode {
 			case modeFilePicker:
@@ -163,9 +153,10 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 type renderFinishedMsg string
 
 func renderDiagCmd(filename string) tea.Cmd {
-	path := path.Join("example", filename)
-	renderDiagToSVG(path)
+
 	return func() tea.Msg {
+		path := path.Join("example", filename)
+		renderDiagToSVG(path)
 		return renderFinishedMsg("Rendering finished")
 	}
 }
