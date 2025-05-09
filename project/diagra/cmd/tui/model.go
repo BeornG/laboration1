@@ -1,6 +1,7 @@
 package tui
 
 import (
+	"fmt"
 	"path"
 	"time"
 
@@ -29,6 +30,7 @@ type Model struct {
 	slideTarget   Mode
 	slidingIn     bool
 	slideOut      bool
+	renderStart   time.Time
 }
 
 // InitialModel skapar en ny instans av Model med angivna diagFiles
@@ -79,16 +81,19 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					return m, slideTick()
 				case 1:
 					m.output = "🔧 This option is not yet implemented."
-					return m, nil
+					return m, clearOutputAfter(2 * time.Second)
 				case 2:
 					return m, tea.Quit
 				}
 			case modeFilePicker:
-				cmd := renderDiagCmd(m.files[m.cursor])
-				m.spinner, _ = m.spinner.Update(msg)
-				m.output = "Rendering..."
 
-				return m, tea.Batch(cmd, spinner.Tick)
+				m.output = "Rendering..."
+				m.loading = true
+				m.renderStart = time.Now()
+				m.spinner = spinner.New(spinner.WithSpinner(spinner.Dot))
+				cmd := renderDiagCmd(m.files[m.cursor])
+
+				return m, tea.Batch(cmd, m.spinner.Tick)
 			}
 
 		case "esc":
@@ -107,7 +112,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case renderFinishedMsg:
 		m.loading = false
-		m.output = string(msg)
+		duration := time.Since(m.renderStart).Milliseconds()
+		m.output = fmt.Sprintf("✅ Rendering finished in %dms", duration)
+		return m, clearOutputAfter(2 * time.Second)
 
 	case spinner.TickMsg:
 		var cmd tea.Cmd
@@ -143,7 +150,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.slideOffset = 0
 			return m, nil
 		}
-
+	case clearOutputMsg:
+		m.output = ""
+		return m, nil
 	}
 
 	return m, tea.Batch(cmds...)
@@ -176,4 +185,13 @@ func slideTick() tea.Cmd {
 	return tea.Tick(40*time.Millisecond, func(t time.Time) tea.Msg {
 		return slideMsg{}
 	})
+}
+
+type clearOutputMsg struct{}
+
+func clearOutputAfter(delay time.Duration) tea.Cmd {
+	return func() tea.Msg {
+		time.Sleep(delay)
+		return clearOutputMsg{}
+	}
 }

@@ -97,6 +97,9 @@ func (m Model) viewMainMenuWithOffset() string {
 		lines[i] = prefix + lines[i]
 	}
 
+	status := " " + m.output
+	b.WriteString("\n" + itemStyle.Render(status))
+
 	content := slideAndBoxify(b.String(), boxWidth-4, boxHeight-4, m.slideOffset)
 
 	full := lipgloss.JoinVertical(lipgloss.Left,
@@ -122,6 +125,10 @@ func (m Model) viewFilePickerWithOffset() string {
 			b.WriteString("  " + itemStyle.Render(f) + "\n")
 		}
 	}
+
+	// Status line (always added)
+	status := m.spinner.View() + " " + m.output
+	b.WriteString("\n" + itemStyle.Render(status))
 
 	// Trimma eller padd höj
 	content := slideAndBoxify(b.String(), boxWidth-4, boxHeight-4, m.slideOffset)
