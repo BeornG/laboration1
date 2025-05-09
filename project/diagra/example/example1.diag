@@ -16,5 +16,5 @@ diagram flowchart (layout=vertical) {
     E -> F "bloop" (color=red, width=4)
     F -> G "Aaaaah"
     G -> H "yay"
-    H -> I "END"
+    H -> I "TUI FUNKAR"
 }

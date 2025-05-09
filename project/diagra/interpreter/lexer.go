@@ -1,7 +1,6 @@
 package interpreter
 
 import (
-	"fmt"
 	"unicode"
 )
 
@@ -12,7 +11,7 @@ var keywords = map[string]bool{
 
 // Lex tar en sträng och returnerar en lista av tokens
 func Lex(input string) []Token {
-	fmt.Println("Lexing started")
+	// fmt.Println("Lexing started")
 	var tokens []Token
 	runes := []rune(input)
 	length := len(runes)

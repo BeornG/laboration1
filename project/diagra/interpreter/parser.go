@@ -178,7 +178,7 @@ func (p *parser) parseDiagram() (Diagram, error) {
 			if p.currentToken().Value == "(" {
 				p.advance()
 				for {
-					fmt.Println("Edge attr loop at:", p.currentToken())
+					// fmt.Println("Edge attr loop at:", p.currentToken())
 					if p.currentToken().Value == ")" || p.currentToken().Type == TOKEN_EOF {
 						break
 					}

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"diagra/cmd/tui"
 	"diagra/interpreter"
 	"diagra/renderer"
 	"fmt"
@@ -47,6 +48,19 @@ func main() {
 
 	exampleDir := "example"
 	outputDir := "output"
+	input := len(os.Args)
+
+	switch input {
+	case 1:
+		fmt.Println("Reading files from example directory:", exampleDir)
+		fmt.Println("Output will be saved to:", outputDir)
+		fmt.Println(("Use 'tui' command to launch the TUI interface"))
+	case 2:
+		if os.Args[1] == "tui" {
+			tui.RunTUI()
+			return
+		}
+	}
 
 	files, err := os.ReadDir(exampleDir)
 	if err != nil {
