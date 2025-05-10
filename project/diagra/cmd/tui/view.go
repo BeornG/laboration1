@@ -9,8 +9,8 @@ import (
 const boxWidth = 60
 const boxHeight = 20
 
-// Styles för att rendera text i terminalen
-// Dessa stilar används för att styla texten i terminalen
+// Styles for the TUI
+// These styles are used to render the TUI elements
 var (
 	titleStyle = lipgloss.NewStyle().
 			Foreground(lipgloss.Color("#FAFAFA")).
@@ -38,7 +38,9 @@ var (
 			Padding(0, 2) // Padding för legend
 )
 
-// Mode för att visa huvudmenyn
+// View renders the model to a string.
+// It handles the sliding transition and centers the content in the terminal.
+// It returns the rendered string to be displayed in the terminal.
 func (m Model) View() string {
 
 	var main string
@@ -57,9 +59,6 @@ func (m Model) View() string {
 			}
 		}
 	} else {
-
-		// Om vi inte är i en övergång, rendera den aktuella vyn
-		// beroende på vilket läge vi är i
 		switch m.mode {
 		case modeMenu:
 			main = m.viewMainMenuWithOffset()
@@ -72,7 +71,9 @@ func (m Model) View() string {
 	return main
 }
 
-// viewMainMenuWithOffset renderar huvudmenyn med en slide offset
+// viewMainMenuWithOffset renders the main menu with a slide offset
+// and centers it in the terminal.
+// It shows the list of options and allows the user to select one.
 func (m Model) viewMainMenuWithOffset() string {
 	options := []string{"Render from example", "Render all diagrams", "Quit"}
 	var b strings.Builder
@@ -110,9 +111,9 @@ func (m Model) viewMainMenuWithOffset() string {
 	return lipgloss.Place(m.width, m.height, lipgloss.Center, lipgloss.Center, full)
 }
 
-// Denna funktionen renderar en box med en border och centrerar den i terminalen
-// och lägger till en slide offset
-// och paddar eller trunkerar innehållet så att det passar i boxen.
+// viewFilePickerWithOffset renders the file picker with a slide offset
+// and centers it in the terminal.
+// It shows the list of files and allows the user to select one.
 func (m Model) viewFilePickerWithOffset() string {
 	var b strings.Builder
 
@@ -130,19 +131,18 @@ func (m Model) viewFilePickerWithOffset() string {
 	status := m.spinner.View() + " " + m.output
 	b.WriteString("\n" + itemStyle.Render(status))
 
-	// Trimma eller padd höj
 	content := slideAndBoxify(b.String(), boxWidth-4, boxHeight-4, m.slideOffset)
 
-	// Rendera boxen med border
 	box := borderStyle.Render(content)
 
-	// Centrera boxen i terminalen och lägg till en slide offset
-	// och lägg till en legend
 	full := lipgloss.JoinVertical(lipgloss.Left, box, "", m.legend())
 	return lipgloss.Place(m.width, m.height, lipgloss.Center, lipgloss.Center, full)
 
 }
 
+// legend returns the legend for the current mode.
+// It shows the available key bindings for navigation and actions.
+// The legend is displayed at the bottom of the screen.
 func (m Model) legend() string {
 
 	switch m.mode {
@@ -155,8 +155,9 @@ func (m Model) legend() string {
 	}
 }
 
-// slideAndBoxify tar en sträng och lägger till en slide offset
-// och centrerar den i terminalen.
+// slideAndBoxify adds a slide effect to the content and boxes it.
+// It takes the content, content width, content height, and slide offset as parameters.
+// It returns the formatted content as a string.
 func slideAndBoxify(content string, contentWidth, contentHeight, slideOffset int) string {
 	lines := strings.Split(content, "\n")
 

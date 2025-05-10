@@ -1,6 +1,7 @@
 package tui
 
 import (
+	"diagra/cmd/utils"
 	"fmt"
 	"os"
 	"path"
@@ -36,7 +37,7 @@ type Model struct {
 	renderStart   time.Time
 }
 
-// InitialModel skapar en ny instans av Model med angivna diagFiles
+// InitialModel creates a new Model with the given diagFiles
 func InitialModel(diagFiles []string) Model {
 	return Model{
 		files:   diagFiles,
@@ -47,12 +48,13 @@ func InitialModel(diagFiles []string) Model {
 	}
 }
 
-// init() initierar modellen och returnerar en cmd för att starta
+// init() initiates the model
 func (m Model) Init() tea.Cmd {
 	return tea.EnterAltScreen
 }
 
-// Update hanterar meddelanden och uppdaterar modellen
+// Update handles the messages and updates the model accordingly
+// It handles key presses, updates the spinner, and manages the sliding transition
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmds []tea.Cmd
 
@@ -168,15 +170,17 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 // Custom message for async rendering
 type renderFinishedMsg string
 
+// renderFinishedMsg is a custom message type to indicate that rendering is finished
 func renderDiagCmd(filename string) tea.Cmd {
 
 	return func() tea.Msg {
 		path := path.Join("example", filename)
-		renderDiagToSVG(path)
+		utils.RenderDiagToSVG(path)
 		return renderFinishedMsg("Rendering finished")
 	}
 }
 
+// renderAllCmd is a command to render all diagrams in the example directory
 func renderAllCmd() tea.Cmd {
 	path := "example"
 	diagFiles, err := os.ReadDir(path)
@@ -192,7 +196,7 @@ func renderAllCmd() tea.Cmd {
 		files = append(files, file.Name())
 	}
 	return func() tea.Msg {
-		renderAllDiagrams(files)
+		utils.RenderAllDiagrams(files)
 		return renderFinishedMsg("Rendering finished")
 	}
 }
@@ -208,6 +212,7 @@ func renderAllCmd() tea.Cmd {
 
 type slideMsg struct{}
 
+// slideTick is a command that sends a tick message every 40 milliseconds
 func slideTick() tea.Cmd {
 	return tea.Tick(40*time.Millisecond, func(t time.Time) tea.Msg {
 		return slideMsg{}
@@ -216,6 +221,7 @@ func slideTick() tea.Cmd {
 
 type clearOutputMsg struct{}
 
+// clearOutputAfter is a command that clears the output after a specified delay
 func clearOutputAfter(delay time.Duration) tea.Cmd {
 	return func() tea.Msg {
 		time.Sleep(delay)

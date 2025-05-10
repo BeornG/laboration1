@@ -1,22 +1,13 @@
 package cli
 
 import (
-	"diagra/interpreter"
-	"diagra/renderer"
+	"diagra/cmd/utils"
 	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
 	"time"
 )
-
-const (
-	exampleDir = "example"
-	outputDir  = "output"
-)
-
-var renderStart time.Time
-var combinedTime int64
 
 // Run is the entry point for the CLI application.
 func RunCLI(args []string) {
@@ -30,20 +21,19 @@ func RunCLI(args []string) {
 			fmt.Println("File must have .diag extension")
 			return
 		}
-		fullPath := filepath.Join(exampleDir, args[1])
+		fullPath := filepath.Join(utils.ExampleDir, args[1])
 		if _, err := os.Stat(fullPath); os.IsNotExist(err) {
 			fmt.Println("File does not exist:", fullPath)
 			return
 		}
-		renderStart = time.Now()
-		processDiagramFile(fullPath, outputDir)
+		renderCmd(fullPath)
 		return
 	case "render-all":
-		renderStart = time.Now()
-		renderAllDiagrams()
+		renderAllCmd()
+		utils.ResetCombinedTime()
 		return
 	case "-h", "--help", "help":
-		help()
+		helpCmd()
 		return
 	default:
 		fmt.Println("Run -h, --help or help for usage")
@@ -52,65 +42,40 @@ func RunCLI(args []string) {
 
 }
 
-// renderAllDiagrams läser alla .diag-filer i exempel-katalogen
-// och renderar dem till SVG-filer i output-katalogen.
-func renderAllDiagrams() {
+// renderAllCmd renders all diagrams in the example directory.
+// It reads all .diag files, processes them, and saves the output as SVG files.
+func renderAllCmd() {
+	path := utils.ExampleDir
+	utils.ResetRenderStart()
 
-	files, err := os.ReadDir(exampleDir)
+	diagFiles, err := os.ReadDir(path)
 	if err != nil {
-		fmt.Println("Could not read directory:", err)
+		fmt.Println("Error reading directory:", err)
+		return
 	}
-
-	for _, file := range files {
+	var files []string
+	for _, file := range diagFiles {
 		if !strings.HasSuffix(file.Name(), ".diag") {
 			continue
 		}
-		fullPath := filepath.Join(exampleDir, file.Name())
-		processDiagramFile(fullPath, outputDir)
-		combinedTime += time.Since(renderStart).Milliseconds()
+		files = append(files, file.Name())
 	}
-	fmt.Println("All diagrams rendered to SVG in", outputDir)
-	fmt.Printf("Total time: %d ms\n", combinedTime)
+	utils.RenderAllDiagrams(files)
+	fmt.Println("All diagrams rendered to SVG in", utils.OutputDir)
+	fmt.Printf("Total time: %d ms\n", utils.CombinedTime)
 }
 
-// processDiagramFile läser en .diag-fil, tolkar den och
-// sparar den som en SVG-fil i output-katalogen.
-func processDiagramFile(path string, outputDir string) {
-	fmt.Println("Reading:", path)
-
-	src, err := os.ReadFile(path)
-	if err != nil {
-		fmt.Println("Could not read file:", err)
-		return
-	}
-	fmt.Printf("Input length: %d bytes\n", len(src))
-	tokens := interpreter.Lex(string(src))
-	for i, tok := range tokens {
-		fmt.Printf("%d: %s (%s)\n", i, tok.Value, tok.Type)
-	}
-	diagram, err := interpreter.Parse(tokens)
-	fmt.Printf("Nodes: %d, Edges: %d\n", len(diagram.Nodes), len(diagram.Edges))
-	if err != nil {
-		fmt.Println("Parsing error:", err)
-		return
-	}
-
-	svg := renderer.RenderSVG(diagram)
-
-	base := strings.TrimSuffix(filepath.Base(path), ".diag")
-	outPath := filepath.Join(outputDir, base+".svg")
-
-	err = os.WriteFile(outPath, []byte(svg), 0644)
-	if err != nil {
-		fmt.Println("Could not save SVG:", err)
-		return
-	}
-	renderTime := time.Since(renderStart).Milliseconds()
-	fmt.Println("Created:", outPath)
-	fmt.Printf("Render time: %d ms\n", renderTime)
+func renderCmd(filename string) {
+	utils.ResetRenderStart()
+	utils.RenderDiagToSVG(filename)
+	fmt.Println("Rendering finished for", filename)
+	timeTaken := time.Since(utils.RenderStart).Milliseconds()
+	fmt.Printf("Total time: %d ms\n", timeTaken)
 }
 
-func help() {
+// helpCmd prints the help message for the CLI application.
+// It shows the available commands and their usage.
+func helpCmd() {
 	fmt.Println("Usage: diagra [command]")
 	fmt.Println("Commands:")
 	fmt.Println("  render <file>		Render a diagram from a .diag file")
