@@ -4,9 +4,8 @@ Generatorer
 TODO:
 
 - dimensioner
-- färger
-- bestämma utseende på etiketter
 - bättre positionering av piltext beroende på längd(kanske även sätta ett max?)
+- bryta upp layout
 
 
 ## renderer filer
