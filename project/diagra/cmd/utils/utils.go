@@ -31,7 +31,7 @@ func CheckError(err error) {
 }
 
 // ResetRenderStart resets the RenderStart time to the current time.
-// it uses a mutex to ensure thread safety.
+// it uses mutex because i was playing around with goroutines
 func ResetRenderStart() {
 	mu.Lock()
 	defer mu.Unlock()
@@ -39,7 +39,6 @@ func ResetRenderStart() {
 }
 
 // ResetCombinedTime resets the CombinedTime to 0.
-// it uses a mutex to ensure thread safety.
 func ResetCombinedTime() {
 	mu.Lock()
 	defer mu.Unlock()

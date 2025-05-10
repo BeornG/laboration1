@@ -81,4 +81,5 @@ func helpCmd() {
 	fmt.Println("  render <file>		Render a diagram from a .diag file")
 	fmt.Println("  render-all		Render all diagrams in the example directory")
 	fmt.Println("  -h, --help, help     	Show this help message")
+	fmt.Println("\n\nRun the program without arguments to start the TUI.")
 }
