@@ -2,20 +2,22 @@ package interpreter
 
 import "fmt"
 
-// Parserstruktur
+// Parser struct for parsing diagram definitions
 type parser struct {
 	tokens  []Token
 	current int
 }
 
-// Global funktion för att starta parsning
+// Parse starts parsing the tokens and returns a Diagram object
 func Parse(tokens []Token) (Diagram, error) {
 	p := &parser{tokens: tokens, current: 0}
 	return p.parseDiagram()
 }
 
-// --- Interna hjälpfunktioner ---
+// --- Internal help functions ---
 
+// currentToken returns the current token being parsed
+// If the current index is out of bounds, it returns an EOF token
 func (p *parser) currentToken() Token {
 	if p.current >= len(p.tokens) {
 		return Token{Type: TOKEN_EOF}
@@ -23,10 +25,12 @@ func (p *parser) currentToken() Token {
 	return p.tokens[p.current]
 }
 
+// advance moves the current token index forward
 func (p *parser) advance() {
 	p.current++
 }
 
+// match checks if the current token matches the expected type
 func (p *parser) match(typ TokenType) bool {
 	if p.currentToken().Type == typ {
 		p.advance()
@@ -38,15 +42,15 @@ func (p *parser) match(typ TokenType) bool {
 func (p *parser) parseDiagram() (Diagram, error) {
 	var d Diagram
 
-	// Förvänta: "diagram"
+	// Expect: "diagram"
 	if p.currentToken().Type != TOKEN_KEYWORD || p.currentToken().Value != "diagram" {
-		return d, fmt.Errorf("förväntade 'diagram' som starttoken")
+		return d, fmt.Errorf("expected 'diagram' keyword")
 	}
 	p.advance()
 
-	// Förvänta: typnamn (t.ex. flowchart)
+	// Expect: diagram type name
 	if p.currentToken().Type != TOKEN_IDENTIFIER {
-		return d, fmt.Errorf("förväntade diagramtyp efter 'diagram'")
+		return d, fmt.Errorf("expected diagram type name")
 	}
 	d.Name = p.currentToken().Value
 	p.advance()
@@ -55,7 +59,7 @@ func (p *parser) parseDiagram() (Diagram, error) {
 		return d, fmt.Errorf("okänd diagramtyp: %s", d.Name)
 	}
 
-	// Valfria attribut (t.ex. layout)
+	// Optional attribute: (layout)
 	if p.currentToken().Value == "(" {
 		p.advance()
 		for {
@@ -67,7 +71,7 @@ func (p *parser) parseDiagram() (Diagram, error) {
 			p.advance()
 
 			if p.currentToken().Value != "=" {
-				return d, fmt.Errorf("förväntade '=' efter attributnamn")
+				return d, fmt.Errorf("expected '=' after attributename")
 			}
 			p.advance()
 
@@ -85,15 +89,16 @@ func (p *parser) parseDiagram() (Diagram, error) {
 		p.match(TOKEN_SYMBOL) // ")"
 	}
 
-	// Förvänta: {
+	// Expect: "{"
+	// This is where the diagram content starts
 	if !p.match(TOKEN_LBRACE) {
-		return d, fmt.Errorf("förväntade '{' efter diagramtyp")
+		return d, fmt.Errorf("expected '{' after diagram type")
 	}
 
 	for p.currentToken().Type != TOKEN_RBRACE && p.currentToken().Type != TOKEN_EOF {
 		tok := p.currentToken()
 
-		// --- Noder ---
+		// --- Nodes ---
 		if tok.Type == TOKEN_KEYWORD && tok.Value == "node" {
 			p.advance()
 			id := p.currentToken().Value
@@ -101,7 +106,7 @@ func (p *parser) parseDiagram() (Diagram, error) {
 			label := p.currentToken().Value
 			p.advance()
 
-			// default värden
+			// Default values
 			color := "#e0f7fa"
 			textColor := "#004d40"
 			shape := "rect"
@@ -118,7 +123,7 @@ func (p *parser) parseDiagram() (Diagram, error) {
 					p.advance()
 
 					if p.currentToken().Value != "=" {
-						return d, fmt.Errorf("förväntade '=' i nod-attribut")
+						return d, fmt.Errorf("expected '=' in node attribute")
 					}
 					p.advance()
 
@@ -140,7 +145,7 @@ func (p *parser) parseDiagram() (Diagram, error) {
 						p.advance()
 					}
 				}
-				p.advance() // stäng ")"
+				p.advance() // close ")"
 			}
 
 			d.Nodes = append(d.Nodes, Node{
@@ -160,7 +165,7 @@ func (p *parser) parseDiagram() (Diagram, error) {
 			p.advance()
 
 			if !p.match(TOKEN_ARROW) {
-				return d, fmt.Errorf("förväntade '->' efter %s", from)
+				return d, fmt.Errorf("expected '->' after %s", from)
 			}
 
 			to := p.currentToken().Value
@@ -187,7 +192,7 @@ func (p *parser) parseDiagram() (Diagram, error) {
 					p.advance()
 
 					if p.currentToken().Value != "=" {
-						return d, fmt.Errorf("förväntade '=' i edge-attribut")
+						return d, fmt.Errorf("expected '=' in edge attribute")
 					}
 					p.advance()
 
@@ -205,7 +210,7 @@ func (p *parser) parseDiagram() (Diagram, error) {
 						p.advance()
 					}
 				}
-				p.advance() // stäng ")"
+				p.advance() // close ")"
 			}
 
 			d.Edges = append(d.Edges, Edge{

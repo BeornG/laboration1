@@ -1,5 +1,8 @@
 package interpreter
 
+// This file contains the types used in the interpreter package.
+// It includes the TokenType, Token struct, and Diagram struct.
+
 type TokenType string
 
 const (

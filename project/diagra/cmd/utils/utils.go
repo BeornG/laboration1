@@ -23,6 +23,7 @@ const (
 )
 
 // CheckError checks if an error occurred and prints it to the console.
+
 func CheckError(err error) {
 	if err != nil {
 		fmt.Println("Error:", err)
