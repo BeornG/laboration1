@@ -14,7 +14,7 @@ func RunCLI(args []string) {
 	switch args[0] {
 	case "render":
 		if len(args) < 2 {
-			fmt.Println("Specify a .diagra file to render")
+			fmt.Println("Specify a .diag file to render")
 			return
 		}
 		if !strings.HasSuffix(args[1], ".diag") {

@@ -2,19 +2,22 @@ package renderer
 
 import "diagra/interpreter"
 
-// Resultatstruktur
+// PositionedNode is a struct that represents a node in the diagram with its position
 type PositionedNode struct {
 	Node interpreter.Node
 	X, Y int
 }
 
+// PositionedEdge is a struct that represents an edge in the diagram with its start and end positions
 type PositionedEdge struct {
 	Edge         interpreter.Edge
 	FromX, FromY int
 	ToX, ToY     int
 }
 
-// Returnerar layout av noder och kanter i en diagram
+// Computelayout returns a layout for the diagram
+// It uses a simple horizontal layout for nodes and edges
+// The nodes are placed in a row with a fixed gap between them
 func ComputeLayout(d interpreter.Diagram) ([]PositionedNode, []PositionedEdge) {
 	var pNodes []PositionedNode
 	var pEdges []PositionedEdge
@@ -22,20 +25,22 @@ func ComputeLayout(d interpreter.Diagram) ([]PositionedNode, []PositionedEdge) {
 	startX, startY := 150, 150
 	gapX := 200
 
-	// Placera noder horisontellt på samma rad
+	// Place nodes horizontally (in a row)
 	for i, n := range d.Nodes {
 		x := startX + i*gapX
 		y := startY
 		pNodes = append(pNodes, PositionedNode{Node: n, X: x, Y: y})
 	}
 
-	// Skapa en ID → position-karta
+	// Create a position map for nodes
+	// This map will be used to find the coordinates of each node
 	posMap := map[string][2]int{}
 	for _, pn := range pNodes {
 		posMap[pn.Node.ID] = [2]int{pn.X, pn.Y}
 	}
 
-	// Koppla kanter till koordinater
+	// Connect nodes with directed edges
+	// The edges are drawn from the center of the "from" node to the center of the "to" node
 	for _, e := range d.Edges {
 		from := posMap[e.From]
 		to := posMap[e.To]
@@ -53,32 +58,33 @@ func ComputeLayout(d interpreter.Diagram) ([]PositionedNode, []PositionedEdge) {
 	return pNodes, pEdges
 }
 
-// ComputeVerticalLayout returnerar en layout för diagrammet i vertikal stil
+// ComputeVerticalLayout returns a layout for the diagram
+// It uses a simple vertical layout for nodes and edges
 func ComputeVerticalLayout(d interpreter.Diagram) ([]PositionedNode, []PositionedEdge) {
 	var pNodes []PositionedNode
 	var pEdges []PositionedEdge
 
-	startX, startY := 400, 100 // mitten på canvas
+	startX, startY := 400, 100 // middle of the screen
 	gapY := 120
 
-	// Placera noder vertikalt (på rad)
+	// Place nodes vertically (in a column)
 	for i, n := range d.Nodes {
 		x := startX
 		y := startY + i*gapY
 		pNodes = append(pNodes, PositionedNode{Node: n, X: x, Y: y})
 	}
 
-	// Positionskarta
+	// Position map for nodes
 	posMap := map[string][2]int{}
 	for _, pn := range pNodes {
 		posMap[pn.Node.ID] = [2]int{pn.X, pn.Y}
 	}
 
-	// Lägg till riktade pilar neråt
+	// Connect nodes with directed edges
 	for _, e := range d.Edges {
 		from := posMap[e.From]
 		to := posMap[e.To]
-		offset := 30 // halv höjd på boxen
+		offset := 30 // half height of the node
 
 		pEdges = append(pEdges, PositionedEdge{
 			Edge:  e,
@@ -92,7 +98,10 @@ func ComputeVerticalLayout(d interpreter.Diagram) ([]PositionedNode, []Positione
 	return pNodes, pEdges
 }
 
-// ComputeTreeLayout returnerar en layout för diagram av typen tree
+// ComputeTreeLayout returns a layout for the diagram of type tree
+// It uses a simple breadth-first search (BFS) to determine the levels of the nodes
+// and assigns positions based on the levels
+// The nodes are placed in a tree-like structure with a fixed gap between levels
 func ComputeTreeLayout(d interpreter.Diagram) ([]PositionedNode, []PositionedEdge) {
 	var pNodes []PositionedNode
 	var pEdges []PositionedEdge
@@ -116,10 +125,11 @@ func ComputeTreeLayout(d interpreter.Diagram) ([]PositionedNode, []PositionedEdg
 		}
 	}
 	if rootID == "" {
-		return pNodes, pEdges // ingen root hittad
+		return pNodes, pEdges // no root found
 	}
 
-	// Bygg nivåer (enkelt BFS)
+	// Build a BFS tree
+	// BFS queue
 	type queueItem struct {
 		ID    string
 		Level int
@@ -146,7 +156,7 @@ func ComputeTreeLayout(d interpreter.Diagram) ([]PositionedNode, []PositionedEdg
 		}
 	}
 
-	// Tilldela positioner
+	// Assign positions
 	yStart := 100
 	xStart := 100
 	xGap := 160
@@ -167,7 +177,7 @@ func ComputeTreeLayout(d interpreter.Diagram) ([]PositionedNode, []PositionedEdg
 		}
 	}
 
-	// Kanter
+	// Edges
 	for _, e := range d.Edges {
 		from := posMap[e.From]
 		to := posMap[e.To]
@@ -183,7 +193,9 @@ func ComputeTreeLayout(d interpreter.Diagram) ([]PositionedNode, []PositionedEdg
 	return pNodes, pEdges
 }
 
-// ComputeTreeLayoutRecursive returnerar en layout för diagram av typen tree
+// ComputeTreeLayoutRecursive returns a layout for the diagram of type tree
+// It uses a recursive approach to determine the positions of the nodes
+// and edges based on the tree structure
 func ComputeTreeLayoutRecursive(d interpreter.Diagram) ([]PositionedNode, []PositionedEdge) {
 	nodeMap := map[string]interpreter.Node{}
 	children := map[string][]string{}
@@ -196,7 +208,8 @@ func ComputeTreeLayoutRecursive(d interpreter.Diagram) ([]PositionedNode, []Posi
 		children[e.From] = append(children[e.From], e.To)
 	}
 
-	// Hitta root: nod som inte är måltavla
+	// Find root: node that is not "To" in any edge
+	// Create a map of targets
 	isTarget := map[string]bool{}
 	for _, e := range d.Edges {
 		isTarget[e.To] = true
@@ -217,19 +230,19 @@ func ComputeTreeLayoutRecursive(d interpreter.Diagram) ([]PositionedNode, []Posi
 	yGap := 120
 	xGap := 80
 
-	// Rekursiv placering
+	// Recursive function to place nodes
 	var place func(id string, depth int) int
 	place = func(id string, depth int) int {
 		c := children[id]
 		if len(c) == 0 {
-			// Löv: placera och returnera x
+			// Leaf node: place itself
 			x := currentX
 			nodePositions[id] = [2]int{x, depth * yGap}
 			currentX += xGap
 			return x
 		}
 
-		// Inre nod: placera barn först
+		// Inner node: place children first
 		childXs := []int{}
 		for _, cid := range c {
 			cx := place(cid, depth+1)
@@ -239,7 +252,7 @@ func ComputeTreeLayoutRecursive(d interpreter.Diagram) ([]PositionedNode, []Posi
 				FromX: 0, FromY: 0, ToX: 0, ToY: 0, // fylls senare
 			})
 		}
-		// Centera denna nod över barnen
+		// Center the node under its children
 		minX := childXs[0]
 		maxX := childXs[len(childXs)-1]
 		centerX := (minX + maxX) / 2
@@ -249,7 +262,9 @@ func ComputeTreeLayoutRecursive(d interpreter.Diagram) ([]PositionedNode, []Posi
 
 	place(rootID, 0)
 
-	// Konvertera till []PositionedNode
+	// Convert node positions to PositionedNode
+	// and add a margin to the x and y coordinates
+	// This is to avoid overlapping with the edges
 	var pNodes []PositionedNode
 	for id, pos := range nodePositions {
 		node := nodeMap[id]
@@ -260,7 +275,7 @@ func ComputeTreeLayoutRecursive(d interpreter.Diagram) ([]PositionedNode, []Posi
 		})
 	}
 
-	// Uppdatera edges med riktiga koordinater
+	// Uppdate edges with the correct positions
 	posMap := map[string][2]int{}
 	for _, pn := range pNodes {
 		posMap[pn.Node.ID] = [2]int{pn.X, pn.Y}

@@ -107,10 +107,10 @@ func (p *parser) parseDiagram() (Diagram, error) {
 			p.advance()
 
 			// Default values
-			color := "#e0f7fa"
-			textColor := "#004d40"
-			shape := "rect"
-			border := "#00796b"
+			color := "#e0f7fa"     // light cyan
+			textColor := "#004d40" // dark cyan
+			shape := "rect"        // default shape: rectangle
+			border := "#00796b"    // default border color: dark cyan
 
 			if p.currentToken().Value == "(" {
 				p.advance()
@@ -177,8 +177,8 @@ func (p *parser) parseDiagram() (Diagram, error) {
 				p.advance()
 			}
 
-			color := "#37474f"
-			width := "2"
+			color := "#37474f" // default color: dark grey
+			width := "2"       // default width: 2
 
 			if p.currentToken().Value == "(" {
 				p.advance()

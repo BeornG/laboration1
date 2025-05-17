@@ -15,12 +15,7 @@ delar upp text i tokens
 ### parser.go
 bygger up AST/datastruktur av tokens
 
-### evaluator.go
-transformerar AST till intern representation
-
 ### types.go
 Token, Node, Edge, AST-strukturer
 
-### interpreter.go
-sammanordnar allt för paketet
 

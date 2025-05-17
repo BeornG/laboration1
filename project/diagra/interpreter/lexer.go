@@ -9,7 +9,9 @@ var keywords = map[string]bool{
 	"node":    true,
 }
 
-// Lex tar en sträng och returnerar en lista av tokens
+// Lex takes a string input and returns a slice of tokens.
+// It identifies keywords, identifiers, numbers, strings, and symbols.
+// It also handles whitespace and comments.
 func Lex(input string) []Token {
 	// fmt.Println("Lexing started")
 	var tokens []Token
@@ -26,7 +28,7 @@ func Lex(input string) []Token {
 			continue
 		}
 
-		// Identifierare eller nyckelord
+		// Identifier and keywords
 		if unicode.IsLetter(c) {
 			start := i
 			for i < length && (unicode.IsLetter(runes[i]) || unicode.IsDigit(runes[i])) {
@@ -41,7 +43,7 @@ func Lex(input string) []Token {
 			continue
 		}
 
-		// Siffror (för t.ex. width=3)
+		// Numbers example: width = 3
 		if unicode.IsDigit(c) {
 			start := i
 			for i < length && unicode.IsDigit(runes[i]) {
@@ -51,7 +53,7 @@ func Lex(input string) []Token {
 			continue
 		}
 
-		// Strängar "..."
+		// Strings "..."
 		if c == '"' {
 			i++
 			start := i
@@ -64,14 +66,14 @@ func Lex(input string) []Token {
 			continue
 		}
 
-		// Pilar ->
+		// Arrows ->
 		if c == '-' && i+1 < length && runes[i+1] == '>' {
 			tokens = append(tokens, Token{Type: TOKEN_ARROW, Value: "->"})
 			i += 2
 			continue
 		}
 
-		// Klammrar
+		// Braces
 		if c == '{' {
 			tokens = append(tokens, Token{Type: TOKEN_LBRACE, Value: "{"})
 			i++
@@ -83,15 +85,15 @@ func Lex(input string) []Token {
 			continue
 		}
 
-		// Kontrollera om tecknet är ett av de specifika symbolerna '=', '(', ')', eller ','.
-		// Om det är det, skapa en TOKEN_SYMBOL och lägg till den i tokens-listan.
+		// Check if it is '=', '(', ')', eller ','.
+		// If it is, create TOKEN_SYMBOL and add to token list.
 		if c == '=' || c == '(' || c == ')' || c == ',' {
 			tokens = append(tokens, Token{Type: TOKEN_SYMBOL, Value: string(c)})
 			i++
 			continue
 		}
 
-		// Okänt tecken – hoppa över
+		// Unknown, skip
 		i++
 	}
 

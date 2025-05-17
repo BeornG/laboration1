@@ -6,7 +6,9 @@ import (
 	"strings"
 )
 
-// Konstanter för att definiera layouten av noder och kanter i SVG-diagrammet.
+// Constants for the layout
+// These constants define the spacing between nodes, the margin around the diagram,
+// the height of each node, and the default width and height of the SVG
 const (
 	nodeSpacingX = 200 // Avstånd mellan noder i X-led
 	nodeSpacingY = 100 // Avstånd mellan noder i Y-led
@@ -14,7 +16,9 @@ const (
 	nodeHeight   = 100 // Höjd på varje nod
 )
 
-// RenderSVG tar ett diagram och returnerar en SVG-sträng som representerar diagrammet.
+// RenderSVG takes a diagram and generates an SVG representation of it.
+// It calculates the positions of nodes and edges based on the layout type
+// and renders them as SVG elements.
 func RenderSVG(d interpreter.Diagram) string {
 	var sb strings.Builder
 
@@ -24,7 +28,9 @@ func RenderSVG(d interpreter.Diagram) string {
 	height := defaultHeight
 	width := defaultWidth
 
-	// räkna total noder och kanter
+	// count the number of nodes and edges
+	// and set the height and width of the SVG
+	// based on the layout type
 	switch d.Layout {
 	case "vertical":
 		height = len(d.Nodes)*nodeSpacingY + margin + nodeHeight
@@ -60,7 +66,7 @@ func RenderSVG(d interpreter.Diagram) string {
 		pNodes, pEdges = ComputeTreeLayout(d)
 	}
 
-	// Noder
+	// Nodes
 	for _, n := range pNodes {
 		x, y := n.X, n.Y
 		if n.Node.Shape == "ellipse" {
@@ -81,7 +87,7 @@ func RenderSVG(d interpreter.Diagram) string {
 		))
 	}
 
-	// Kanter
+	// Edges
 	for _, e := range pEdges {
 		sb.WriteString(fmt.Sprintf(
 			`  <line x1="%d" y1="%d" x2="%d" y2="%d" stroke="%s" stroke-width="%s" marker-end="url(#arrow)"/>`+"\n",
@@ -108,7 +114,7 @@ func RenderSVG(d interpreter.Diagram) string {
 
 	}
 
-	// Pilar
+	// Arrow marker
 	sb.WriteString(`
   <defs>
     <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5"

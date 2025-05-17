@@ -2,6 +2,9 @@ package interpreter
 
 // This file contains the types used in the interpreter package.
 // It includes the TokenType, Token struct, and Diagram struct.
+// It also includes the Node and Edge structs used in the diagram representation.
+// The allowedTypes map defines the valid diagram types that can be parsed.
+// The parser struct is responsible for parsing the tokens and creating the diagram object.
 
 type TokenType string
 
