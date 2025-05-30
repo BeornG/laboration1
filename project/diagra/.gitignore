@@ -1,2 +1,5 @@
 # Ignore all .svg files
 *.svg
+
+# Ignore binaries
+*.exe
